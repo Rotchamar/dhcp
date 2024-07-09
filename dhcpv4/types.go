@@ -272,7 +272,9 @@ const (
 	OptionSIPUAConfigurationServiceDomains      optionCode = 141
 	OptionOPTIONIPv4AddressANDSF                optionCode = 142
 	OptionOPTIONIPv6AddressANDSF                optionCode = 143
-	// Options 144-149 returned in RFC 3679
+	// Option 144 returned in RFC 3679
+	OptionForcerenewNonceCapable optionCode = 145
+	// Options 146-149 returned in RFC 3679
 	OptionTFTPServerAddress optionCode = 150
 	OptionStatusCode        optionCode = 151
 	OptionBaseTime          optionCode = 152
@@ -437,7 +439,9 @@ var optionCodeToString = map[OptionCode]string{
 	OptionSIPUAConfigurationServiceDomains:      "SIP UA Configuration Service Domains",
 	OptionOPTIONIPv4AddressANDSF:                "OPTION-IPv4_Address-ANDSF",
 	OptionOPTIONIPv6AddressANDSF:                "OPTION-IPv6_Address-ANDSF",
-	// Options 144-149 returned in RFC 3679
+	// Option 144 returned in RFC 3679
+	OptionForcerenewNonceCapable: "Forcerenew Nonce Capable",
+	// Options 146-149 returned in RFC 3679
 	OptionTFTPServerAddress: "TFTP Server Address",
 	OptionStatusCode:        "Status Code",
 	OptionBaseTime:          "Base Time",
