@@ -400,6 +400,13 @@ func WithServerAddr(n *net.UDPAddr) ClientOpt {
 // Matcher matches DHCP packets.
 type Matcher func(*dhcpv4.DHCPv4) bool
 
+// MatchTrue returns a matcher that always returns true
+func MatchTrue() Matcher {
+	return func(p *dhcpv4.DHCPv4) bool {
+		return true
+	}
+}
+
 // IsMessageType returns a matcher that checks for the message types.
 func IsMessageType(t dhcpv4.MessageType, tt ...dhcpv4.MessageType) Matcher {
 	return func(p *dhcpv4.DHCPv4) bool {
@@ -419,6 +426,23 @@ func IsMessageType(t dhcpv4.MessageType, tt ...dhcpv4.MessageType) Matcher {
 func IsCorrectServer(s net.IP) Matcher {
 	return func(p *dhcpv4.DHCPv4) bool {
 		return p.ServerIdentifier().Equal(s)
+	}
+}
+
+// HasOption returns a matcher that checks that the specific option is present.
+func HasOption(opt dhcpv4.OptionCode) Matcher {
+	return func(p *dhcpv4.DHCPv4) bool {
+		_, ok := p.Options[opt.Code()]
+		return ok
+	}
+}
+
+// IsForcerenewNonceCapable returns a matcher that checks whether the response
+// is compliant with RFC 6704
+func IsForcerenewNonceCapable() Matcher {
+	return func(p *dhcpv4.DHCPv4) bool {
+		val, ok := p.Options[dhcpv4.OptionForcerenewNonceCapable.Code()]
+		return ok && bytes.Equal(val, dhcpv4.AlgorithmHMAC_MD5.ToBytes())
 	}
 }
 
@@ -449,12 +473,24 @@ func (c *Client) InterfaceAddr() net.HardwareAddr {
 	return b
 }
 
+// CreateDiscover creates a DHCPDiscover message for a given client.
+func (c *Client) CreateDiscover(modifiers ...dhcpv4.Modifier) (discover *dhcpv4.DHCPv4, err error) {
+	// RFC 2131, Section 4.4.1, Table 5 details what a DISCOVER packet should
+	// contain.
+	discover, err = dhcpv4.NewDiscovery(c.ifaceHWAddr, modifiers...)
+	if err != nil {
+		return nil, fmt.Errorf("unable to create a discovery request: %w", err)
+	}
+
+	return
+}
+
 // DiscoverOffer sends a DHCPDiscover message and returns the first valid offer
 // received.
 func (c *Client) DiscoverOffer(ctx context.Context, modifiers ...dhcpv4.Modifier) (offer *dhcpv4.DHCPv4, err error) {
 	// RFC 2131, Section 4.4.1, Table 5 details what a DISCOVER packet should
 	// contain.
-	discover, err := dhcpv4.NewDiscovery(c.ifaceHWAddr, dhcpv4.PrependModifiers(modifiers,
+	discover, err := c.CreateDiscover(dhcpv4.PrependModifiers(modifiers,
 		dhcpv4.WithOption(dhcpv4.OptMaxMessageSize(MaxMessageSize)))...)
 	if err != nil {
 		return nil, fmt.Errorf("unable to create a discovery request: %w", err)
