@@ -92,6 +92,30 @@ var opcodeToString = map[OpcodeType]string{
 	OpcodeBootReply:   "BootReply",
 }
 
+// AlgorithmType represents a DHCPv4-allowed generation algorithm
+type AlgorithmType uint8
+
+// constants that represent valid values for AlgorithmType
+const (
+	AlgorithmHMAC_MD5 AlgorithmType = 1
+)
+
+// ToBytes returns the serialized version of this algorithm.
+func (a AlgorithmType) ToBytes() []byte {
+	return []byte{byte(a)}
+}
+
+func (a AlgorithmType) String() string {
+	if s, ok := algorithmTypeToString[a]; ok {
+		return s
+	}
+	return fmt.Sprintf("unknown (%d)", uint8(a))
+}
+
+var algorithmTypeToString = map[AlgorithmType]string{
+	AlgorithmHMAC_MD5: "HMAC-MD5",
+}
+
 // OptionCode is a single byte representing the code for a given Option.
 //
 // OptionCode is an interface purely to support different stringers on options
