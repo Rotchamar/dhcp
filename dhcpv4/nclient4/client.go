@@ -458,6 +458,18 @@ func IsAll(ms ...Matcher) Matcher {
 	}
 }
 
+// IsSome returns a matcher that checks for at least one matcher to be true.
+func IsSome(ms ...Matcher) Matcher {
+	return func(p *dhcpv4.DHCPv4) bool {
+		for _, m := range ms {
+			if m(p) {
+				return true
+			}
+		}
+		return false
+	}
+}
+
 // RemoteAddr is the default DHCP server address this client sends messages to.
 func (c *Client) RemoteAddr() *net.UDPAddr {
 	// Make a copy so the caller cannot modify the address once the client
