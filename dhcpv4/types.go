@@ -27,15 +27,16 @@ type MessageType byte
 const (
 	// MessageTypeNone is not a real message type, it is used by certain
 	// functions to signal that no explicit message type is requested
-	MessageTypeNone     MessageType = 0
-	MessageTypeDiscover MessageType = 1
-	MessageTypeOffer    MessageType = 2
-	MessageTypeRequest  MessageType = 3
-	MessageTypeDecline  MessageType = 4
-	MessageTypeAck      MessageType = 5
-	MessageTypeNak      MessageType = 6
-	MessageTypeRelease  MessageType = 7
-	MessageTypeInform   MessageType = 8
+	MessageTypeNone       MessageType = 0
+	MessageTypeDiscover   MessageType = 1
+	MessageTypeOffer      MessageType = 2
+	MessageTypeRequest    MessageType = 3
+	MessageTypeDecline    MessageType = 4
+	MessageTypeAck        MessageType = 5
+	MessageTypeNak        MessageType = 6
+	MessageTypeRelease    MessageType = 7
+	MessageTypeInform     MessageType = 8
+	MessageTypeForceRenew MessageType = 9
 )
 
 // ToBytes returns the serialized version of this option described by RFC 2132,
@@ -61,14 +62,15 @@ func (m *MessageType) FromBytes(data []byte) error {
 }
 
 var messageTypeToString = map[MessageType]string{
-	MessageTypeDiscover: "DISCOVER",
-	MessageTypeOffer:    "OFFER",
-	MessageTypeRequest:  "REQUEST",
-	MessageTypeDecline:  "DECLINE",
-	MessageTypeAck:      "ACK",
-	MessageTypeNak:      "NAK",
-	MessageTypeRelease:  "RELEASE",
-	MessageTypeInform:   "INFORM",
+	MessageTypeDiscover:   "DISCOVER",
+	MessageTypeOffer:      "OFFER",
+	MessageTypeRequest:    "REQUEST",
+	MessageTypeDecline:    "DECLINE",
+	MessageTypeAck:        "ACK",
+	MessageTypeNak:        "NAK",
+	MessageTypeRelease:    "RELEASE",
+	MessageTypeInform:     "INFORM",
+	MessageTypeForceRenew: "FORCERENEW",
 }
 
 // OpcodeType represents a DHCPv4 opcode.
